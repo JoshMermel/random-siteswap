@@ -1,0 +1,50 @@
+<!doctype html>
+<html>
+
+<body onload="update()">
+<h1>Random Siteswaps</h1>
+
+<div>
+Siteswap Length: <input type="text" id="length" value="3" onchange="update()"><br>
+Number of Objects: <input type="text" id="num_balls" value="5" onchange="update()"><br>
+Max Multiplex at once: <input type="text" id="max_multiplicity" value="2" onchange="update()"><br>
+</div>
+
+<div>
+  <input type="radio" id="async" name="is_sync" value="async"
+         onclick="update()" checked>
+  <label for="async">Async</label>
+</div>
+<div>
+  <input type="radio" id="sync" name="is_sync" value="sync"
+         onclick="update()" checked>
+  <label for="sync">Sync</label>
+</div>
+
+
+<div id="siteswap_out"></div>
+</body>
+
+<script src="random.js"></script>
+<script>
+function update() {
+  let length = document.getElementById("length").value;
+  let num_balls = document.getElementById("num_balls").value;
+  let max_multiplicity = document.getElementById("max_multiplicity").value;
+  let is_sync = (document.querySelector('input[name="is_sync"]:checked').value === "sync");
+
+  // TODO(jmerm): error messages if above are invalid
+
+//  let siteswap = parseInput(input);
+//  if (!validateSiteswap(siteswap)) {
+//    document.getElementById("siteswap_out").innerHTML = "Input is not a valid siteswap";
+//  } else if (hand_seq.match(/[^lmr]+/g) || hand_seq === "") {
+//    document.getElementById("siteswap_out").innerHTML = "Hand seq must contain only the characters 'l', 'm', and 'r'.";
+//  } else {
+    let siteswap = randomSiteswap(length, num_balls, max_multiplicity, is_sync);
+
+    document.getElementById("siteswap_out").innerHTML = siteswap;
+//  }
+}
+</script>
+</html>
