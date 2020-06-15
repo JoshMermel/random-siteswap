@@ -127,9 +127,9 @@ function randomSync(len, num_balls, max_multiplicity) {
 function randomSiteswap(length, max_throw, max_multiplicity, is_sync) {
   var ret = [];
   if (is_sync) {
-    return printSyncSiteswap(randomSync(length, max_throw, max_multiplicity));
+    return randomSync(length, max_throw, max_multiplicity);
   } 
-  return printAsyncSiteswap(randomAsync(length, max_throw, max_multiplicity));
+  return randomAsync(length, max_throw, max_multiplicity);
 }
 
 
@@ -138,6 +138,8 @@ function toToss(i) {
     return String.fromCharCode(i + 48);
   } else if (i >= 10 && i <= 35) {
     return String.fromCharCode(i + 97 - 10);
+  } else {
+    return '{' + i.toString() + '}';
   }
   // TODO: handle characters larger than this?
 }
@@ -170,7 +172,11 @@ function toSyncToss(i, odd_modifier) {
   if (i % 2 == 0) {
     return toToss(i);
   }
-  return toToss(i + odd_modifier) + 'x';
+  let ret = (toToss(i + odd_modifier) + 'x');
+  if (i + odd_modifier > 35) {
+    ret = ret.substr(0, ret.length - 2) + 'x}';
+  }
+  return ret;
 }
 
 function toSyncMultiToss(arr, odd_modifier) {

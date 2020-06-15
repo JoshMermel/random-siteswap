@@ -24,9 +24,13 @@ Max Multiplex at once: <input type="text" id="max_multiplicity" value="2" onchan
 <button onclick="update()" type="button">Another one</button>
 
 <p style="font-size:30px" id="siteswap_out"></p>
+
+<canvas id="canvas" width=350px height=600px></canvas>
+
 </body>
 
 <script src="random.js"></script>
+<script src="anim.js"></script>
 <script>
 function update() {
   let length = document.getElementById("length").value;
@@ -41,9 +45,18 @@ function update() {
   } else if (max_multiplicity < 1) {
     document.getElementById("siteswap_out").innerHTML = "Max multiplicity must be 1 or more";
   } else {
+    
     let siteswap = randomSiteswap(length, num_balls, max_multiplicity, is_sync);
+    let siteswap_str = "";
+    if (is_sync) {
+      siteswap_str = printSyncSiteswap(siteswap);
+    } else {
+      siteswap_str = printAsyncSiteswap(siteswap);
+    }
 
-    document.getElementById("siteswap_out").innerHTML = siteswap;
+    document.getElementById("siteswap_out").innerHTML = siteswap_str;
+    setSiteswap(siteswap, false, is_sync);
+    StartAnimation();
   }
 }
 </script>
