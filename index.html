@@ -21,11 +21,13 @@
         </div>
 
         <hr/>
-        <div class="btn-group" data-toggle="buttons" id="color-toggle">
-          <label class="btn btn-primary">
-            <input type="radio" name="rhythm" id="async" autocomplete="off"> Async </label>
-          <label class="btn btn-primary active">
-            <input type="radio" name="rhythm" id="sync" autocomplete="off" checked="checked"> Sync </label>
+        <div>
+          <input type="radio" id="async" name="is_sync" value="async" onclick="update()" checked>
+          <label for="async">Async</label>
+        </div>
+        <div>
+          <input type="radio" id="sync" name="is_sync" value="sync" onclick="update()" checked>
+          <label for="sync">Sync</label>
         </div>
         <hr>
 
@@ -40,11 +42,13 @@
         <div> Animation speed </div>
         <input id="animation_speed" type="text" data-slider-min="1" data-slider-max="40" data-slider-step="1" data-slider-value="10" /></input>
         <hr/>
-        <div class="btn-group" data-toggle="buttons" id="color-toggle">
-          <label class="btn btn-primary">
-            <input type="radio" name="colors" id="by_orbit" autocomplete="off"> Color by Orbit </label>
-          <label class="btn btn-primary active">
-            <input type="radio" name="colors" id="random" autocomplete="off" checked="checked"> Random Colors </label>
+        <div>
+          <input type="radio" id="random_colors" name="colors" value="random_colors" onclick="recolorRandomly()" checked>
+          <label for="random_colors">Random Colors</label>
+        </div>
+        <div>
+          <input type="radio" id="color_by_orbit" name="colors" value="color_by_orbit" onclick="recolorByOrbit()" checked>
+          <label for="color_by_orbit">Color by Orbit</label>
         </div>
 
       </div>
@@ -66,23 +70,13 @@ window.onload = function() {
   });
   update();
   StartAnimation();
-  $('input[name=colors]').click(function(){
-    if (document.getElementById("by_orbit").checked) {
-      recolorByOrbit();
-    } else {
-      recolorRandomly();
-    }
-  });
-  $('input[name=rhythm]').click(function(){
-    update();
-  });
 }
 function update() {
   let length = document.getElementById("length").value;
   let num_balls = document.getElementById("num_balls").value;
   let max_multiplicity = document.getElementById("max_multiplicity").value;
-  let is_sync = document.getElementById("sync").checked;
-  let color_by_orbit = document.getElementById("by_orbit").checked;
+  let is_sync = (document.querySelector('input[name="is_sync"]:checked').value === "sync");
+  let color_by_orbit = (document.querySelector('input[name="colors"]:checked').value === "color_by_orbit");
 
   // TODO(jmerm): cap this length;
   if (length < 1) {
