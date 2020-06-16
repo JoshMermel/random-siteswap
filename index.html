@@ -1,43 +1,90 @@
 <!doctype html>
 <html>
 
+<head>
+  <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/7.1.0/bootstrap-slider.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" />
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/7.1.0/css/bootstrap-slider.min.css" />
+</head>
+
 <body onload="update()">
-<h1>Random Siteswaps</h1>
 
-<div>
-Siteswap Length: <input type="text" id="length" value="3" onchange="update()"><br>
-Number of Objects: <input type="text" id="num_balls" value="5" onchange="update()"><br>
-Max Multiplex at once: <input type="text" id="max_multiplicity" value="2" onchange="update()"><br>
-</div>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-6" id="io">
+        <h1>Random Siteswaps</h1>
+        <div>
+          Siteswap Length: <input type="text" id="length" value="3" onchange="update()"><br>
+          Number of Objects: <input type="text" id="num_balls" value="5" onchange="update()"><br>
+          Max Multiplex at once: <input type="text" id="max_multiplicity" value="2" onchange="update()"><br>
+        </div>
 
-<div>
-  <input type="radio" id="async" name="is_sync" value="async"
-         onclick="update()" checked>
-  <label for="async">Async</label>
-</div>
-<div>
-  <input type="radio" id="sync" name="is_sync" value="sync"
-         onclick="update()" checked>
-  <label for="sync">Sync</label>
-</div>
+        <hr/>
+        <div class="btn-group" data-toggle="buttons" id="color-toggle">
+          <label class="btn btn-primary">
+            <input type="radio" name="rhythm" id="async" autocomplete="off"> Async </label>
+          <label class="btn btn-primary active">
+            <input type="radio" name="rhythm" id="sync" autocomplete="off" checked="checked"> Sync </label>
+        </div>
+        <hr>
 
-<button onclick="update()" type="button">Another one</button>
+        <button onclick="update()" type="button">Another one</button>
+        <hr>
 
-<p style="font-size:30px" id="siteswap_out"></p>
+        <p style="font-size:30px" id="siteswap_out"></p>
+      </div>
 
-<canvas id="canvas" width=350px height=600px></canvas>
+      <div class="col-md-6" id="animation">
+        <canvas id="canvas" width=350px height=600px></canvas>
+        <div> Animation speed </div>
+        <input id="animation_speed" type="text" data-slider-min="1" data-slider-max="40" data-slider-step="1" data-slider-value="10" /></input>
+        <hr/>
+        <div class="btn-group" data-toggle="buttons" id="color-toggle">
+          <label class="btn btn-primary">
+            <input type="radio" name="colors" id="by_orbit" autocomplete="off"> Color by Orbit </label>
+          <label class="btn btn-primary active">
+            <input type="radio" name="colors" id="random" autocomplete="off" checked="checked"> Random Colors </label>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
 
 </body>
 
 <script src="random.js"></script>
 <script src="anim.js"></script>
 <script>
+window.onload = function() {
+  $("#animation_speed").slider({
+    value: 10
+  });
+  $("#animation_speed").on("change", function(slideEvt) {
+    pace = slideEvt.value.newValue / 160;
+  });
+  update();
+  StartAnimation();
+  $('input[name=colors]').click(function(){
+    if (document.getElementById("by_orbit").checked) {
+      recolorByOrbit();
+    } else {
+      recolorRandomly();
+    }
+  });
+  $('input[name=rhythm]').click(function(){
+    update();
+  });
+}
 function update() {
   let length = document.getElementById("length").value;
   let num_balls = document.getElementById("num_balls").value;
   let max_multiplicity = document.getElementById("max_multiplicity").value;
-  let is_sync = (document.querySelector('input[name="is_sync"]:checked').value === "sync");
+  let is_sync = document.getElementById("sync").checked;
+  let color_by_orbit = document.getElementById("by_orbit").checked;
 
+  // TODO(jmerm): cap this length;
   if (length < 1) {
     document.getElementById("siteswap_out").innerHTML = "Length must be 1 or more";
   } else if (num_balls < 1) {
@@ -55,7 +102,7 @@ function update() {
     }
 
     document.getElementById("siteswap_out").innerHTML = siteswap_str;
-    setSiteswap(siteswap, false, is_sync);
+    setSiteswap(siteswap, color_by_orbit, is_sync);
     StartAnimation();
   }
 }
