@@ -15,9 +15,9 @@
       <div class="col-md-6" id="io">
         <h1>Random Siteswaps</h1>
         <div>
-          Siteswap Length: <input type="text" id="length" value="3" onchange="update()"><br>
-          Number of Objects: <input type="text" id="num_balls" value="5" onchange="update()"><br>
-          Max Multiplex at once: <input type="text" id="max_multiplicity" value="2" onchange="update()"><br>
+          Siteswap Length: <input type="text" id="length" onchange="update()"><br>
+          Number of Objects: <input type="text" id="num_balls" onchange="update()"><br>
+          Max Multiplex at once: <input type="text" id="max_multiplicity" onchange="update()"><br>
         </div>
 
         <hr/>
@@ -68,6 +68,9 @@ window.onload = function() {
   $("#animation_speed").on("change", function(slideEvt) {
     pace = slideEvt.value.newValue / 160;
   });
+  document.getElementById("length").value = randInt(2,5);
+  document.getElementById("num_balls").value = randInt(4,15);
+  document.getElementById("max_multiplicity").value = randInt(1,3);
   update();
   StartAnimation();
 }
