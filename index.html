@@ -77,7 +77,10 @@ window.onload = function() {
   update();
   StartAnimation();
 }
-function update() {
+function update(attempts) {
+  if (attempts === undefined) {
+    attempts = 0;
+  }
   let length = document.getElementById("length").value;
   let num_balls = document.getElementById("num_balls").value;
   let max_multiplicity = document.getElementById("max_multiplicity").value;
@@ -100,17 +103,36 @@ function update() {
     // apply min and max
     if (max_throw !== "" && max_throw > num_balls) {
       applyMax(siteswap, max_throw);
+      if (!maxConstraintSatisfied(siteswap, max_throw) && attempts < 100) {
+        console.log(JSON.stringify(siteswap), " failed max constraint");
+        update(attempts + 1);
+        return;
+      }
     }
     if (min_throw !== "" && min_throw < num_balls) {
       applyMin(siteswap, min_throw);
+      if (!minConstraintSatisfied(siteswap, min_throw) && attempts < 100) {
+        console.log(JSON.stringify(siteswap), " failed min constraint");
+        update(attempts + 1);
+        return;
+      }
     }
 
+    if (attempts > 0) {
+      console.log("had to restart generation ", attempts, " times.");
+    }
 
     let siteswap_str = "";
     if (is_sync) {
       siteswap_str = printSyncSiteswap(siteswap);
     } else {
       siteswap_str = printAsyncSiteswap(siteswap);
+    }
+
+    if (siteswap_str == document.getElementById("siteswap_out").innerHTML && attempts < 100) {
+      console.log("generated the last thing as last time, retrying");
+      update(attempts + 1);
+      return;
     }
 
     document.getElementById("siteswap_out").innerHTML = siteswap_str;

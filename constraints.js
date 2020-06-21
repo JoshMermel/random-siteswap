@@ -115,7 +115,10 @@ function applyMax(siteswap, max) {
       return;
     }
   }
-  console.log("took " + swaps + " swaps");
+}
+
+function maxConstraintSatisfied(siteswap, max) {
+  return getIdxMax(siteswap, getMaxIdx(siteswap)) <= max;
 }
 
 function applyMin(siteswap, min) {
@@ -135,9 +138,12 @@ function applyMin(siteswap, min) {
       return;
     }
   }
-  console.log("took " + swaps + " swaps");
 }
 
-let siteswap = [[8,3], [8, 1]];
-applyMax(siteswap, 7)
-console.log(siteswap);
+function minConstraintSatisfied(siteswap, min) {
+  return getIdxMin(siteswap, getMinIdx(siteswap)) >= min;
+}
+
+// let siteswap = [[5,3],[3],[6,5],[3],[5],[5],[3],[3],[3],[5,3],[6,3],[4],[3],[4],[3]];
+// applyMin(siteswap, 4)
+// console.log(siteswap);
