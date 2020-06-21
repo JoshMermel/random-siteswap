@@ -144,6 +144,6 @@ function minConstraintSatisfied(siteswap, min) {
   return getIdxMin(siteswap, getMinIdx(siteswap)) >= min;
 }
 
-let siteswap = [[58],[83],[105,104],[62],[60, 28]]
-applyMin(siteswap, 95)
-console.log(siteswap);
+// let siteswap = [[58],[83],[105,104],[62],[60, 28]]
+// applyMin(siteswap, 95)
+// console.log(siteswap);
