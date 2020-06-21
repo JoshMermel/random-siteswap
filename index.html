@@ -108,7 +108,6 @@ function update(attempts) {
     let siteswap = randomSiteswap(length, num_balls, max_multiplicity, is_sync);
     
     // apply min and max
-    // TODO(jmerm): print errors when there are problems with min/max;
     if (max_throw !== "" && max_throw > num_balls) {
       applyMax(siteswap, max_throw, is_sync);
       if (!maxConstraintSatisfied(siteswap, max_throw, is_sync) && attempts < 1000) {

@@ -170,12 +170,3 @@ function applyMin(siteswap, min, is_sync) {
 function minConstraintSatisfied(siteswap, min, is_sync) {
   return getIdxMin(siteswap, getMinIdx(siteswap, is_sync), is_sync) >= min;
 }
-
-// let siteswap = [[58],[83],[105,104],[62],[60, 28]]
-// applyMin(siteswap, 95)
-// console.log(siteswap);
-
-// when finding max, use is_sync value
-// when checking if all constraints are met, use is_sync value
-// when swapping, use "real" values
-// when finding swap idx, use "real values"
