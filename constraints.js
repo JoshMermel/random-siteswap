@@ -52,19 +52,18 @@ function getIdxMin(siteswap, idx, is_sync) {
 
 // Note, it's OK if either index is out of range. That just means we're swapping
 // sites in copies of the siteswap that are implied to come before/after
-// min_index is expected be larger than swap_index but to land earlier.
-// TODO(jmerm): rename args for clarity.
-function swapSites(siteswap, min_idx, swap_idx) {
-  let min_landing = min_idx + getIdxMin(siteswap, pmod(min_idx, siteswap.length), false);
-  let swap_landing = swap_idx + getIdxMax(siteswap, pmod(swap_idx, siteswap.length), false);
+// inner_index is expected be larger than outer_index but to land earlier.
+function swapSites(siteswap, inner_idx, outer_idx) {
+  let min_landing = inner_idx + getIdxMin(siteswap, pmod(min_idx, siteswap.length), false);
+  let swap_landing = outer_idx + getIdxMax(siteswap, pmod(outer_idx, siteswap.length), false);
 
-  siteswap[pmod(min_idx, siteswap.length)].pop();
-  siteswap[pmod(min_idx, siteswap.length)].push(swap_landing - min_idx);
-  siteswap[pmod(swap_idx, siteswap.length)][0] = min_landing - swap_idx;
+  siteswap[pmod(inner_idx, siteswap.length)].pop();
+  siteswap[pmod(inner_idx, siteswap.length)].push(swap_landing - min_idx);
+  siteswap[pmod(outer_idx, siteswap.length)][0] = min_landing - outer_idx;
 
   // preserve descending sort so it's easy to find maxes going forward.
-  siteswap[pmod(min_idx, siteswap.length)].sort(function(a, b){return b-a;});
-  siteswap[pmod(swap_idx, siteswap.length)].sort(function(a, b){return b-a;});
+  siteswap[pmod(inner_idx, siteswap.length)].sort(function(a, b){return b-a;});
+  siteswap[pmod(outer_idx, siteswap.length)].sort(function(a, b){return b-a;});
 }
 
 // returns the index with the highest throw. In the case of a tie, one of the
