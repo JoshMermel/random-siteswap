@@ -81,13 +81,13 @@ function update(attempts) {
   if (attempts === undefined) {
     attempts = 0;
   }
-  let length = document.getElementById("length").value;
-  let num_balls = document.getElementById("num_balls").value;
-  let max_multiplicity = document.getElementById("max_multiplicity").value;
+  let length = +document.getElementById("length").value;
+  let num_balls = +document.getElementById("num_balls").value;
+  let max_multiplicity = +document.getElementById("max_multiplicity").value;
   let is_sync = (document.querySelector('input[name="is_sync"]:checked').value === "sync");
   let color_by_orbit = (document.querySelector('input[name="colors"]:checked').value === "color_by_orbit");
-  let max_throw = document.getElementById("max_throw").value;
-  let min_throw = document.getElementById("min_throw").value;
+  let max_throw = +document.getElementById("max_throw").value;
+  let min_throw = +document.getElementById("min_throw").value;
 
   // TODO(jmerm): cap this length;
   if (length < 1) {
@@ -103,7 +103,7 @@ function update(attempts) {
     // apply min and max
     if (max_throw !== "" && max_throw > num_balls) {
       applyMax(siteswap, max_throw);
-      if (!maxConstraintSatisfied(siteswap, max_throw) && attempts < 100) {
+      if (!maxConstraintSatisfied(siteswap, max_throw) && attempts < 1000) {
         console.log(JSON.stringify(siteswap), " failed max constraint");
         update(attempts + 1);
         return;
@@ -111,7 +111,7 @@ function update(attempts) {
     }
     if (min_throw !== "" && min_throw < num_balls) {
       applyMin(siteswap, min_throw);
-      if (!minConstraintSatisfied(siteswap, min_throw) && attempts < 100) {
+      if (!minConstraintSatisfied(siteswap, min_throw) && attempts < 1000) {
         console.log(JSON.stringify(siteswap), " failed min constraint");
         update(attempts + 1);
         return;
@@ -129,7 +129,7 @@ function update(attempts) {
       siteswap_str = printAsyncSiteswap(siteswap);
     }
 
-    if (siteswap_str == document.getElementById("siteswap_out").innerHTML && attempts < 100) {
+    if (siteswap_str == document.getElementById("siteswap_out").innerHTML && attempts < 1000) {
       console.log("generated the last thing as last time, retrying");
       update(attempts + 1);
       return;

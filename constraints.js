@@ -4,7 +4,7 @@
 //  - when getting swap idx for max, should we be looking at the min or the max
 //    of the swap idx?
 
-var give_up_threshhold = 100;
+var give_up_threshhold = 10000;
 
 // return n%m but negatives mod to positives
 function pmod(n, m) {
@@ -144,6 +144,6 @@ function minConstraintSatisfied(siteswap, min) {
   return getIdxMin(siteswap, getMinIdx(siteswap)) >= min;
 }
 
-// let siteswap = [[5,3],[3],[6,5],[3],[5],[5],[3],[3],[3],[5,3],[6,3],[4],[3],[4],[3]];
-// applyMin(siteswap, 4)
-// console.log(siteswap);
+let siteswap = [[58],[83],[105,104],[62],[60, 28]]
+applyMin(siteswap, 95)
+console.log(siteswap);
