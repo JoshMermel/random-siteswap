@@ -6,9 +6,12 @@ function pmod(n, m) {
 }
 
 function parseConstraint(str) {
-  if (!isNan(+str)) {
+  if (str === "") {
+    return "";
+  }
+  if (!isNaN(+str)) {
     return +str;
-  } else if (str.length === 1 && str.match(/[a-z]/i);) {
+  } else if (str.length === 1 && str.match(/[a-z]/i)) {
     return str[0].charCodeAt(0) - "a".charCodeAt(0) + 10;
   }
 }
@@ -43,6 +46,7 @@ function getIdxMin(siteswap, idx, is_sync) {
 // Note, it's OK if either index is out of range. That just means we're swapping
 // sites in copies of the siteswap that are implied to come before/after
 // min_index is expected be larger than swap_index but to land earlier.
+// TODO(jmerm): rename args for clarity.
 function swapSites(siteswap, min_idx, swap_idx) {
   let min_landing = min_idx + getIdxMin(siteswap, pmod(min_idx, siteswap.length), false);
   let swap_landing = swap_idx + getIdxMax(siteswap, pmod(swap_idx, siteswap.length), false);
