@@ -18,30 +18,30 @@ function getIdxMin(siteswap, idx, is_sync) {
   return siteswap[idx][len - 1];
 }
 
-// note, it's OK if idx2 is out of range
-function swapSitesMax(siteswap, idx1, idx2) {
-  let landing1 = idx1 + getIdxMax(siteswap, idx);
-  let landing2 = idx2 + getIdxMax(siteswap, pmod(idx2, siteswap.length));
+// note, it's OK if swap_ids is out of range
+function swapSitesMax(siteswap, max_idx, swap_ids) {
+  let landing1 = max_idx + getIdxMax(siteswap, idx);
+  let landing2 = swap_ids + getIdxMax(siteswap, pmod(swap_ids, siteswap.length));
 
-  siteswap[idx1][0] = landing2 - idx1;
-  siteswap[pmod(idx2, siteswap.length)][0] = landing1 - idx2;
+  siteswap[max_idx][0] = landing2 - max_idx;
+  siteswap[pmod(swap_ids, siteswap.length)][0] = landing1 - swap_ids;
 
   // preserve descending sort so it's easy to find maxes going forward.
-  siteswap[idx1].sort(function(a, b){return b-a;});
-  siteswap[pmod(idx2, siteswap.length)].sort(function(a, b){return b-a;});
+  siteswap[max_idx].sort(function(a, b){return b-a;});
+  siteswap[pmod(swap_ids, siteswap.length)].sort(function(a, b){return b-a;});
 }
 
-// note, it's OK if idx2 is out of range
-function swapSitesMin(siteswap, idx1, idx2) {
-  let landing1 = idx1 + getIdxMin(siteswap, idx1);
-  let landing2 = idx2 + getIdxMax(siteswap, pmod(idx2, siteswap.length));
+// note, it's OK if swap_idx is out of range
+function swapSitesMin(siteswap, min_idx, swap_idx) {
+  let landing1 = min_idx + getIdxMin(siteswap, min_idx);
+  let landing2 = swap_idx + getIdxMax(siteswap, pmod(swap_idx, siteswap.length));
 
-  siteswap[idx1][siteswap[idx1].length - 1] = landing2 - idx1;
-  siteswap[pmod(idx2, siteswap.length)][0] = landing1 - idx2;
+  siteswap[min_idx][siteswap[min_idx].length - 1] = landing2 - min_idx;
+  siteswap[pmod(swap_idx, siteswap.length)][0] = landing1 - swap_idx;
 
   // preserve descending sort so it's easy to find maxes going forward.
-  siteswap[idx1].sort(function(a, b){return b-a;});
-  siteswap[pmod(idx2, siteswap.length)].sort(function(a, b){return b-a;});
+  siteswap[min_idx].sort(function(a, b){return b-a;});
+  siteswap[pmod(swap_idx, siteswap.length)].sort(function(a, b){return b-a;});
 }
 
 // returns the index with the highest throw. In the case of a tie, one of the
