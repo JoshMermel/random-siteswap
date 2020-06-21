@@ -7,10 +7,21 @@ function pmod(n, m) {
   return ((n % m) + m) % m
 }
 
+function getIdxMax(siteswap, idx, is_sync) {
+  // TODO(jmerm): respect is_sync.
+  return siteswap[idx][0];
+}
+
+function getIdxMin(siteswap, idx, is_sync) {
+  // TODO(jmerm): respect is_sync.
+  let len = siteswap[idx].length;
+  return siteswap[idx][len - 1];
+}
+
 // note, it's OK if idx2 is out of range
 function swapSitesMax(siteswap, idx1, idx2) {
-  let landing1 = idx1 + siteswap[idx1][0];
-  let landing2 = idx2 + siteswap[pmod(idx2, siteswap.length)][0];
+  let landing1 = idx1 + getIdxMax(siteswap, idx);
+  let landing2 = idx2 + getIdxMax(siteswap, pmod(idx2, siteswap.length));
 
   siteswap[idx1][0] = landing2 - idx1;
   siteswap[pmod(idx2, siteswap.length)][0] = landing1 - idx2;
@@ -22,8 +33,8 @@ function swapSitesMax(siteswap, idx1, idx2) {
 
 // note, it's OK if idx2 is out of range
 function swapSitesMin(siteswap, idx1, idx2) {
-  let landing1 = idx1 + siteswap[idx1][siteswap[idx1].length - 1];
-  let landing2 = idx2 + siteswap[pmod(idx2, siteswap.length)][0];
+  let landing1 = idx1 + getIdxMin(siteswap, idx1);
+  let landing2 = idx2 + getIdxMax(siteswap, pmod(idx2, siteswap.length));
 
   siteswap[idx1][siteswap[idx1].length - 1] = landing2 - idx1;
   siteswap[pmod(idx2, siteswap.length)][0] = landing1 - idx2;
@@ -38,7 +49,7 @@ function swapSitesMin(siteswap, idx1, idx2) {
 function getMaxIndex(siteswap) {
   let max_idx = 0;
   for (let i = 0; i < siteswap.length; i++) {
-    if (siteswap[i][0] > siteswap[max_idx][0]) {
+    if (getIdxMax(siteswap, 0) > getIdxMax(siteswap, max_idx)) {
       max_idx = i;
     }
   }
@@ -48,7 +59,7 @@ function getMaxIndex(siteswap) {
 function getMinIndex(siteswap) {
   let min_idx = 0;
   for (let i = 0; i < siteswap.length; i++) {
-    if (siteswap[i][siteswap[i].length-1] < siteswap[min_idx][siteswap[min_idx].length-1]) {
+    if (getIdxMin(siteswap, i) < getIdxMin(siteswap, min_idx)) {
       min_idx = i;
     }
   }
@@ -59,10 +70,10 @@ function getMinIndex(siteswap) {
 // an index in another copy of the siteswap that's implied to come after this
 // one
 function getSwapIndexForMax(siteswap, max_idx) {
-  let lands_in = siteswap[max_idx][0];
+  let lands_in = getIdxMax(siteswap, max_idx);
   let swap_idx = max_idx;
   while (lands_in > 0) {
-    if (siteswap[pmod(swap_idx, siteswap.length)][0] < lands_in) {
+    if (getIdxMax(siteswap, pmod(swap_idx, siteswap.length)) < lands_in) {
       return swap_idx;
     }
 
@@ -77,10 +88,10 @@ function getSwapIndexForMax(siteswap, max_idx) {
 // an index in another copy of the siteswap that's implied to come before this
 // one
 function getSwapIndexForMin(siteswap, min_idx) {
-  let lands_in = siteswap[min_idx][siteswap[min_idx].length-1] + 1;
+  let lands_in = getIdxMin(siteswap, min_idx) + 1;
   let swap_idx = min_idx - 1;
-  while (lands_in < 1000) {  // need better condition?
-    if (siteswap[pmod(swap_idx, siteswap.length)][0] > lands_in) {
+  while (lands_in < 1000) {  // need better condition? looped back to self?
+    if (getIdxMax(siteswap, pmod(swap_idx, siteswap.length)) > lands_in) {
       return swap_idx;
     }
 
@@ -94,7 +105,7 @@ function getSwapIndexForMin(siteswap, min_idx) {
 function applyMax(siteswap, max) {
   let max_idx = getMaxIndex(siteswap);
   let swaps = 0;
-  while (siteswap[max_idx][0] > max) {
+  while (getIdxMax(siteswap, max_idx) > max) {
     let swap_idx = getSwapIndexForMax(siteswap, max_idx);
     if (swap_idx == "failed") {
       console.log("Failed to get swap index for max, ", max_idx, JSON.stringify(siteswap));
@@ -113,7 +124,7 @@ function applyMax(siteswap, max) {
 function applyMin(siteswap, min) {
   let min_idx = getMinIndex(siteswap);
   let swaps = 0;
-  while (siteswap[min_idx][siteswap[min_idx].length - 1] < min) {
+  while (getIdxMin(siteswap, min_idx) < min) {
     let swap_idx = getSwapIndexForMin(siteswap, min_idx);
     if (swap_idx == "failed") {
       console.log("Failed to get swap index for min ", min_idx, JSON.stringify(siteswap));
@@ -128,3 +139,7 @@ function applyMin(siteswap, min) {
     }
   }
 }
+
+let siteswap = [[7,5], [2], [1]];
+applyMin(siteswap, 2)
+console.log(siteswap);
