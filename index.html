@@ -18,6 +18,8 @@
           Siteswap Length: <input type="text" id="length" onchange="update()"><br>
           Number of Objects: <input type="text" id="num_balls" onchange="update()"><br>
           Max Multiplex at once: <input type="text" id="max_multiplicity" onchange="update()"><br>
+          Max Throw (experimental): <input type="text" id="max_throw" onchange="update()"><br>
+          Min Throw (experimental): <input type="text" id="min_throw" onchange="update()"><br>
         </div>
 
         <hr/>
@@ -59,6 +61,7 @@
 </body>
 
 <script src="random.js"></script>
+<script src="constraints.js"></script>
 <script src="anim.js"></script>
 <script>
 window.onload = function() {
@@ -80,6 +83,8 @@ function update() {
   let max_multiplicity = document.getElementById("max_multiplicity").value;
   let is_sync = (document.querySelector('input[name="is_sync"]:checked').value === "sync");
   let color_by_orbit = (document.querySelector('input[name="colors"]:checked').value === "color_by_orbit");
+  let max_throw = document.getElementById("max_throw").value;
+  let min_throw = document.getElementById("min_throw").value;
 
   // TODO(jmerm): cap this length;
   if (length < 1) {
@@ -91,6 +96,16 @@ function update() {
   } else {
     
     let siteswap = randomSiteswap(length, num_balls, max_multiplicity, is_sync);
+    
+    // apply min and max
+    if (max_throw !== "" && max_throw > num_balls) {
+      applyMax(siteswap, max_throw);
+    }
+    if (min_throw !== "" && min_throw < num_balls) {
+      applyMin(siteswap, min_throw);
+    }
+
+
     let siteswap_str = "";
     if (is_sync) {
       siteswap_str = printSyncSiteswap(siteswap);
