@@ -54,11 +54,11 @@ function getIdxMin(siteswap, idx, is_sync) {
 // sites in copies of the siteswap that are implied to come before/after
 // inner_index is expected be larger than outer_index but to land earlier.
 function swapSites(siteswap, inner_idx, outer_idx) {
-  let min_landing = inner_idx + getIdxMin(siteswap, pmod(min_idx, siteswap.length), false);
+  let min_landing = inner_idx + getIdxMin(siteswap, pmod(inner_idx, siteswap.length), false);
   let swap_landing = outer_idx + getIdxMax(siteswap, pmod(outer_idx, siteswap.length), false);
 
   siteswap[pmod(inner_idx, siteswap.length)].pop();
-  siteswap[pmod(inner_idx, siteswap.length)].push(swap_landing - min_idx);
+  siteswap[pmod(inner_idx, siteswap.length)].push(swap_landing - inner_idx);
   siteswap[pmod(outer_idx, siteswap.length)][0] = min_landing - outer_idx;
 
   // preserve descending sort so it's easy to find maxes going forward.
@@ -112,7 +112,7 @@ function getSwapIdxForMax(siteswap, max_idx) {
 function getSwapIdxForMin(siteswap, min_idx) {
   let lands_in = getIdxMin(siteswap, min_idx, false) + 1;
   let swap_idx = min_idx - 1;
-  while (lands_in < 1000) {  // TODO(jmerm): better condition? looped back to self?
+  while (min_idx - swap_idx < siteswap.length) {
     if (getIdxMax(siteswap, pmod(swap_idx, siteswap.length), false) > lands_in) {
       return swap_idx;
     }
