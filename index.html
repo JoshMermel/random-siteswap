@@ -99,6 +99,10 @@ function update(attempts) {
     document.getElementById("siteswap_out").innerHTML = "Max throw must be larger than the number of balls";
   } else if (min_throw !== "" && min_throw > num_balls) {
     document.getElementById("siteswap_out").innerHTML = "Min throw must be smaller than the number of balls";
+  } else if (max_throw === "Parse Error") {
+    document.getElementById("siteswap_out").innerHTML = "Failed to parse min throw";
+  } else if (min_throw === "Parse Error") {
+    document.getElementById("siteswap_out").innerHTML = "Failed to parse max throw";
   } else {
     
     let siteswap = randomSiteswap(length, num_balls, max_multiplicity, is_sync);

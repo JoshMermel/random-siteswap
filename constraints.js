@@ -14,6 +14,7 @@ function parseConstraint(str) {
   } else if (str.length === 1 && str.match(/[a-z]/i)) {
     return str[0].charCodeAt(0) - "a".charCodeAt(0) + 10;
   }
+  return "Parse Error";
 }
 
 // returns the max value in siteswap[idx]
