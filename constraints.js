@@ -77,13 +77,11 @@ function getSwapIndexForMax(siteswap, max_idx) {
 // an index in another copy of the siteswap that's implied to come before this
 // one
 function getSwapIndexForMin(siteswap, min_idx) {
-  let lands_in = siteswap[min_idx][siteswap[min_idx].length-1];
+  let lands_in = siteswap[min_idx][siteswap[min_idx].length-1] + 1;
   let swap_idx = min_idx - 1;
   while (lands_in < 1000) {  // need better condition?
     if (siteswap[pmod(swap_idx, siteswap.length)][0] > lands_in) {
       return swap_idx;
-    } else {
-      console.log(siteswap[pmod(swap_idx, siteswap.length)][0], lands_in);
     }
 
     swap_idx -= 1;
