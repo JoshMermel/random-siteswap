@@ -111,7 +111,6 @@ function update(attempts) {
     if (max_throw !== "" && max_throw > num_balls) {
       applyMax(siteswap, max_throw, is_sync);
       if (!maxConstraintSatisfied(siteswap, max_throw, is_sync) && attempts < 1000) {
-        console.log(JSON.stringify(siteswap), " failed max constraint");
         update(attempts + 1);
         return;
       }
@@ -119,15 +118,11 @@ function update(attempts) {
     if (min_throw !== "" && min_throw < num_balls) {
       applyMin(siteswap, min_throw, is_sync);
       if (!minConstraintSatisfied(siteswap, min_throw, is_sync) && attempts < 1000) {
-        console.log(JSON.stringify(siteswap), " failed min constraint");
         update(attempts + 1);
         return;
       }
     }
 
-    if (attempts > 0) {
-      console.log("had to restart generation ", attempts, " times.");
-    }
 
     let siteswap_str = "";
     if (is_sync) {
@@ -137,7 +132,6 @@ function update(attempts) {
     }
 
     if (siteswap_str == document.getElementById("siteswap_out").innerHTML && attempts < 1000) {
-      console.log("generated the last thing as last time, retrying");
       update(attempts + 1);
       return;
     }

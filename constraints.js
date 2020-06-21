@@ -131,14 +131,12 @@ function applyMax(siteswap, max, is_sync) {
   while (getIdxMax(siteswap, max_idx, is_sync) > max) {
     let swap_idx = getSwapIdxForMax(siteswap, max_idx);
     if (swap_idx == "failed") {
-      console.log("Failed to get swap index for max, ", max_idx, JSON.stringify(siteswap));
       return;
     }
     swapSites(siteswap, swap_idx, max_idx);
     max_idx = getMaxIdx(siteswap, is_sync);
     swaps += 1;
     if (swaps > give_up_threshhold) {
-      console.log("Failed to apply max after " + give_up_threshhold + " swaps");
       return;
     }
   }
@@ -154,14 +152,12 @@ function applyMin(siteswap, min, is_sync) {
   while (getIdxMin(siteswap, min_idx, is_sync) < min) {
     let swap_idx = getSwapIdxForMin(siteswap, min_idx);
     if (swap_idx == "failed") {
-      console.log("Failed to get swap index for min ", min_idx, JSON.stringify(siteswap));
       return;
     }
     swapSites(siteswap, min_idx, swap_idx);
     min_idx = getMinIdx(siteswap, is_sync);
     swaps += 1;
     if (swaps > give_up_threshhold) {
-      console.log("Failed to apply min after " + give_up_threshhold + " swaps");
       return;
     }
   }
