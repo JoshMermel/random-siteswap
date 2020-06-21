@@ -18,6 +18,9 @@ function parseConstraint(str) {
 }
 
 // returns the max value in siteswap[idx]
+// TODO(jmerm): is_sync is super confusingly named. it really means applying the
+// +/- 1 modifier of sync siteswaps which sometimes isn't used even when
+// handling sync siteswaps. I should find a better name.
 function getIdxMax(siteswap, idx, is_sync) {
   let ret = siteswap[idx][0];
   if (is_sync && (ret % 2 === 1)) {
@@ -31,6 +34,9 @@ function getIdxMax(siteswap, idx, is_sync) {
 }
 
 // returns the min value in siteswap[idx]
+// TODO(jmerm): is_sync is super confusingly named. it really means applying the
+// +/- 1 modifier of sync siteswaps which sometimes isn't used even when
+// handling sync siteswaps. I should find a better name.
 function getIdxMin(siteswap, idx, is_sync) {
   let len = siteswap[idx].length;
   let ret = siteswap[idx][len - 1];
