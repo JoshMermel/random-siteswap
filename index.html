@@ -86,10 +86,10 @@ function update(attempts) {
   let max_multiplicity = +document.getElementById("max_multiplicity").value;
   let is_sync = (document.querySelector('input[name="is_sync"]:checked').value === "sync");
   let color_by_orbit = (document.querySelector('input[name="colors"]:checked').value === "color_by_orbit");
-  let max_throw = +document.getElementById("max_throw").value;
-  let min_throw = +document.getElementById("min_throw").value;
+  let max_throw = parseConstraint(document.getElementById("max_throw").value);
+  let min_throw = parseConstraint(document.getElementById("min_throw").value);
 
-  // TODO(jmerm): cap this length;
+  // TODO(jmerm): cap this length?
   if (length < 1) {
     document.getElementById("siteswap_out").innerHTML = "Length must be 1 or more";
   } else if (num_balls < 1) {
@@ -101,17 +101,18 @@ function update(attempts) {
     let siteswap = randomSiteswap(length, num_balls, max_multiplicity, is_sync);
     
     // apply min and max
+    // TODO(jmerm): print errors when there are problems with min/max;
     if (max_throw !== "" && max_throw > num_balls) {
-      applyMax(siteswap, max_throw);
-      if (!maxConstraintSatisfied(siteswap, max_throw) && attempts < 1000) {
+      applyMax(siteswap, max_throw, is_sync);
+      if (!maxConstraintSatisfied(siteswap, max_throw, is_sync) && attempts < 1000) {
         console.log(JSON.stringify(siteswap), " failed max constraint");
         update(attempts + 1);
         return;
       }
     }
     if (min_throw !== "" && min_throw < num_balls) {
-      applyMin(siteswap, min_throw);
-      if (!minConstraintSatisfied(siteswap, min_throw) && attempts < 1000) {
+      applyMin(siteswap, min_throw, is_sync);
+      if (!minConstraintSatisfied(siteswap, min_throw, is_sync) && attempts < 1000) {
         console.log(JSON.stringify(siteswap), " failed min constraint");
         update(attempts + 1);
         return;

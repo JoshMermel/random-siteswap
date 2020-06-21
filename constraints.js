@@ -1,9 +1,3 @@
-// big questions
-//  - sync, enforcing max so it works when odd numbers are modified for
-//      printing.
-//  - when getting swap idx for max, should we be looking at the min or the max
-//    of the swap idx?
-
 var give_up_threshhold = 10000;
 
 // return n%m but negatives mod to positives
@@ -11,25 +5,47 @@ function pmod(n, m) {
   return ((n % m) + m) % m
 }
 
+function parseConstraint(str) {
+  if (!isNan(+str)) {
+    return +str;
+  } else if (str.length === 1 && str.match(/[a-z]/i);) {
+    return str[0].charCodeAt(0) - "a".charCodeAt(0) + 10;
+  }
+}
+
+// returns the max value in siteswap[idx]
 function getIdxMax(siteswap, idx, is_sync) {
-  // TODO(jmerm): respect is_sync.
-  return siteswap[idx][0];
+  let ret = siteswap[idx][0];
+  if (is_sync && (ret % 2 === 1)) {
+    if (idx % 2 === 0) {
+      ret -= 1;
+    } else {
+      ret += 1
+    }
+  }
+  return ret;
 }
 
+// returns the min value in siteswap[idx]
 function getIdxMin(siteswap, idx, is_sync) {
-  // TODO(jmerm): respect is_sync.
   let len = siteswap[idx].length;
-  return siteswap[idx][len - 1];
+  let ret = siteswap[idx][len - 1];
+  if (is_sync && (ret % 2 === 1)) {
+    if (idx % 2 === 0) {
+      ret -= 1;
+    } else {
+      ret += 1
+    }
+  }
+  return ret;
 }
 
-function swapSitesMax(siteswap, max_idx, swap_idx) {
-  swapSitesMin(siteswap, swap_idx, max_idx);
-}
-
-// Note, it's OK if either index is out of range.
-function swapSitesMin(siteswap, min_idx, swap_idx) {
-  let min_landing = min_idx + getIdxMin(siteswap, pmod(min_idx, siteswap.length));
-  let swap_landing = swap_idx + getIdxMax(siteswap, pmod(swap_idx, siteswap.length));
+// Note, it's OK if either index is out of range. That just means we're swapping
+// sites in copies of the siteswap that are implied to come before/after
+// min_index is expected be larger than swap_index but to land earlier.
+function swapSites(siteswap, min_idx, swap_idx) {
+  let min_landing = min_idx + getIdxMin(siteswap, pmod(min_idx, siteswap.length), false);
+  let swap_landing = swap_idx + getIdxMax(siteswap, pmod(swap_idx, siteswap.length), false);
 
   siteswap[pmod(min_idx, siteswap.length)].pop();
   siteswap[pmod(min_idx, siteswap.length)].push(swap_landing - min_idx);
@@ -42,20 +58,20 @@ function swapSitesMin(siteswap, min_idx, swap_idx) {
 
 // returns the index with the highest throw. In the case of a tie, one of the
 // max indices is returned;
-function getMaxIdx(siteswap) {
+function getMaxIdx(siteswap, is_sync) {
   let max_idx = 0;
   for (let i = 0; i < siteswap.length; i++) {
-    if (getIdxMax(siteswap, i) > getIdxMax(siteswap, max_idx)) {
+    if (getIdxMax(siteswap, i, is_sync) > getIdxMax(siteswap, max_idx, is_sync)) {
       max_idx = i;
     }
   }
   return max_idx;
 }
 
-function getMinIdx(siteswap) {
+function getMinIdx(siteswap, is_sync) {
   let min_idx = 0;
   for (let i = 0; i < siteswap.length; i++) {
-    if (getIdxMin(siteswap, i) < getIdxMin(siteswap, min_idx)) {
+    if (getIdxMin(siteswap, i, is_sync) < getIdxMin(siteswap, min_idx, is_sync)) {
       min_idx = i;
     }
   }
@@ -66,10 +82,10 @@ function getMinIdx(siteswap) {
 // an index in another copy of the siteswap that's implied to come after this
 // one
 function getSwapIdxForMax(siteswap, max_idx) {
-  let lands_in = getIdxMax(siteswap, max_idx) - 1;
+  let lands_in = getIdxMax(siteswap, max_idx, false) - 1;
   let swap_idx = max_idx + 1;
   while (lands_in > 0) {
-    if (getIdxMin(siteswap, pmod(swap_idx, siteswap.length)) < lands_in) {
+    if (getIdxMin(siteswap, pmod(swap_idx, siteswap.length), false) < lands_in) {
       return swap_idx;
     }
 
@@ -84,10 +100,10 @@ function getSwapIdxForMax(siteswap, max_idx) {
 // an index in another copy of the siteswap that's implied to come before this
 // one
 function getSwapIdxForMin(siteswap, min_idx) {
-  let lands_in = getIdxMin(siteswap, min_idx) + 1;
+  let lands_in = getIdxMin(siteswap, min_idx, false) + 1;
   let swap_idx = min_idx - 1;
-  while (lands_in < 1000) {  // need better condition? looped back to self?
-    if (getIdxMax(siteswap, pmod(swap_idx, siteswap.length)) > lands_in) {
+  while (lands_in < 1000) {  // TODO(jmerm): better condition? looped back to self?
+    if (getIdxMax(siteswap, pmod(swap_idx, siteswap.length), false) > lands_in) {
       return swap_idx;
     }
 
@@ -98,17 +114,17 @@ function getSwapIdxForMin(siteswap, min_idx) {
   return "failed";
 }
 
-function applyMax(siteswap, max) {
-  let max_idx = getMaxIdx(siteswap);
+function applyMax(siteswap, max, is_sync) {
+  let max_idx = getMaxIdx(siteswap, is_sync);
   let swaps = 0;
-  while (getIdxMax(siteswap, max_idx) > max) {
+  while (getIdxMax(siteswap, max_idx, is_sync) > max) {
     let swap_idx = getSwapIdxForMax(siteswap, max_idx);
     if (swap_idx == "failed") {
       console.log("Failed to get swap index for max, ", max_idx, JSON.stringify(siteswap));
       return;
     }
-    swapSitesMax(siteswap, max_idx, swap_idx);
-    max_idx = getMaxIdx(siteswap);
+    swapSites(siteswap, swap_idx, max_idx);
+    max_idx = getMaxIdx(siteswap, is_sync);
     swaps += 1;
     if (swaps > give_up_threshhold) {
       console.log("Failed to apply max after " + give_up_threshhold + " swaps");
@@ -117,21 +133,21 @@ function applyMax(siteswap, max) {
   }
 }
 
-function maxConstraintSatisfied(siteswap, max) {
-  return getIdxMax(siteswap, getMaxIdx(siteswap)) <= max;
+function maxConstraintSatisfied(siteswap, max, is_sync) {
+  return getIdxMax(siteswap, getMaxIdx(siteswap, is_sync), is_sync) <= max;
 }
 
-function applyMin(siteswap, min) {
-  let min_idx = getMinIdx(siteswap);
+function applyMin(siteswap, min, is_sync) {
+  let min_idx = getMinIdx(siteswap, is_sync);
   let swaps = 0;
-  while (getIdxMin(siteswap, min_idx) < min) {
+  while (getIdxMin(siteswap, min_idx, is_sync) < min) {
     let swap_idx = getSwapIdxForMin(siteswap, min_idx);
     if (swap_idx == "failed") {
       console.log("Failed to get swap index for min ", min_idx, JSON.stringify(siteswap));
       return;
     }
-    swapSitesMin(siteswap, min_idx, swap_idx);
-    min_idx = getMinIdx(siteswap);
+    swapSites(siteswap, min_idx, swap_idx);
+    min_idx = getMinIdx(siteswap, is_sync);
     swaps += 1;
     if (swaps > give_up_threshhold) {
       console.log("Failed to apply min after " + give_up_threshhold + " swaps");
@@ -140,10 +156,15 @@ function applyMin(siteswap, min) {
   }
 }
 
-function minConstraintSatisfied(siteswap, min) {
-  return getIdxMin(siteswap, getMinIdx(siteswap)) >= min;
+function minConstraintSatisfied(siteswap, min, is_sync) {
+  return getIdxMin(siteswap, getMinIdx(siteswap, is_sync), is_sync) >= min;
 }
 
 // let siteswap = [[58],[83],[105,104],[62],[60, 28]]
 // applyMin(siteswap, 95)
 // console.log(siteswap);
+
+// when finding max, use is_sync value
+// when checking if all constraints are met, use is_sync value
+// when swapping, use "real" values
+// when finding swap idx, use "real values"
